@@ -7,7 +7,7 @@ def clean_data(df):
     df["date"] = pd.to_datetime(df[["day", "month", "year"]])
     df = df.drop(["StreamID", "TimesViewed", "price", "day"], axis=1)
     #compute total revenue
-    df["total_revenue"] = df.apply(lambda x: x["total_price"]*x["times_viewed"], axis=1)
+    df["total_revenue"] = df.apply(lambda x: x["total_price"], axis=1)
 
     #fix missing customer ids
     max_id = df["customer_id"].max()
