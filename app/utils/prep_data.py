@@ -29,3 +29,11 @@ def prepare_data_by_country(df, country=None):
     if country:
         return merged_df[merged_df["Country"] == country]
     return merged_df
+
+def train_test_split(df, split=0.7):
+    n = int(len(df)*split)
+    train = df[df.index < n]
+    test = df[df.index >= n]
+    train.index = train["Date"]
+    test.index = test["Date"]
+    return train, test
