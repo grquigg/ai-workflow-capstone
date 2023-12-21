@@ -6,6 +6,8 @@ from utils.prep_data import *
 from sklearn.metrics import mean_squared_error
 from sklearn.pipeline import Pipeline
 from statsmodels.tsa.arima.model import ARIMA
+from prophet import Prophet
+from prophet.serialize import model_to_json, model_from_json
 
 def predict_with_time_series(model, test):
     y_pred = model.get_forecast(len(test.index))
@@ -51,18 +53,33 @@ def train_ARIMA(data_dir, params=None, grid_search=False, grid_search_params=Non
         save_model(best_pipe["time"], model_path)
     return best_pipe, best_error, best_order
 
-def train_AR(data_dir, params=None, grid_search=False, grid_search_params=None):
+def train_AR(data_dir, params=None, grid_search=False, grid_search_params=None, save_model=True, model_path=None):
     pass
 
-def train_prophet(data_dir, params=None, grid_search=False, grid_search_params=None):
-    pass
+def train_prophet(data_dir, save_model=True, model_path=None):
+    df = load_data(data_dir)
+    df = clean_data(df)
+    df = prepare_data(df)
+    df.rename(columns={'Date':'ds', 'Total Revenue': 'y'}, inplace=True)
+    df_train = df[:-30]
+    df_test = df[-30:]
+    model = Prophet(weekly_seasonality=True)  
+    model.fit(df_train)
+    y_pred = model.predict(df_test)
+    error = mean_squared_error(df_test.y, y_pred.yhat)
+    if save_model:
+        with open(model_path, 'w') as fout:
+            fout.write(model_to_json(model))  # Save model
+    return model, error
 
 
 if __name__ == "__main__":
     CSV_PATH = "time_series.csv"
     DATA_DIR = "../cs-train"
-    parameters = {"order": [(i, j, k) for i in range(0,10) for j in range(0,1) for k in range(0,10)]}
-    print("Training ARIMA")
-    best_model, best_error, best_order = train_ARIMA(DATA_DIR, params={"target_metric": mean_squared_error}, grid_search=False, grid_search_params=parameters, model_path="best_model.pkl")
-    print(best_order)
-    print(best_error)
+    # parameters = {"order": [(i, j, k) for i in range(0,10) for j in range(0,1) for k in range(0,10)]}
+    # print("Training ARIMA")
+    # best_model, best_error, best_order = train_ARIMA(DATA_DIR, params={"target_metric": mean_squared_error}, grid_search=False, grid_search_params=parameters, model_path="best_model.pkl")
+    # print(best_order)
+    # print(best_error)
+    pr, error = train_prophet(DATA_DIR, save_model=True, model_path="prophet.json")
+    print(error)
