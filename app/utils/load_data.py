@@ -1,6 +1,7 @@
 import json
 import glob
 import pandas as pd
+
 def load_data(pathname):
 #load data
     data = []

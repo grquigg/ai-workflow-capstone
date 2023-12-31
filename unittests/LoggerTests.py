@@ -35,9 +35,10 @@ class LoggerTest(unittest.TestCase):
         runtime = "00:00:01"
         model_version = 0.1
         model_version_note = "test model"
-        
+        model_name = "arima"
+        hyperparameters = {"order": [(i, j, k) for i in range(1,6) for j in range(1,6) for k in range(1,6)]}
         update_train_log(data_shape,eval_test, runtime,
-                         model_version, model_version_note, test=True)
+                         model_version, model_version_note, model_name, test=True, hyperparameters=hyperparameters)
 
         self.assertTrue(os.path.exists(log_file))
         
@@ -54,10 +55,10 @@ class LoggerTest(unittest.TestCase):
         runtime = "00:00:01"
         model_version = 0.1
         model_version_note = "test model"
-        
+        model_name = "arima"
+        hyperparameters = {"order": [(i, j, k) for i in range(1,6) for j in range(1,6) for k in range(1,6)]}
         update_train_log(data_shape,eval_test, runtime,
-                         model_version, model_version_note, test=True)
-
+                         model_version, model_version_note, model_name, test=True, hyperparameters=hyperparameters)
         df = pd.read_csv(log_file)
         logged_eval_test = [literal_eval(i) for i in df['eval_test'].copy()][-1]
         self.assertEqual(eval_test, logged_eval_test)

@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request
 from flask import render_template
 from app.model import model_train
 
-MODELS = ["ar", "prophet", "arima"]
 app = Flask(__name__)
 
 @app.route("/")
@@ -36,5 +35,6 @@ def train():
     print("...training complete")
 
     return(jsonify(True))
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080,debug=True)

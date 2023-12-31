@@ -1,13 +1,17 @@
 import pandas as pd
 import numpy as np
-from utils.load_data import load_data
-from utils.clean_data import clean_data
-from utils.prep_data import *
+from app.utils.load_data import load_data
+from app.utils.clean_data import clean_data
+from app.utils.prep_data import *
 from sklearn.metrics import mean_squared_error
 from sklearn.pipeline import Pipeline
 from statsmodels.tsa.arima.model import ARIMA
 from prophet import Prophet
 from prophet.serialize import model_to_json, model_from_json
+
+MODELS = ["ar", "prophet", "arima"]
+MODEL_VERSIONS = ["0.1", "0.1", "0.1"]
+MODEL_NOTES = ["AR model", "Prophet model", "Arima model"]
 
 def predict_with_time_series(model, test):
     y_pred = model.get_forecast(len(test.index))
